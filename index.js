@@ -1,12 +1,26 @@
 const express = require('express')
 const app = express()
 
+let day = new Date()
+let weekday = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+]
+let currentDay = weekday[day.getDay()]
+
+let currentUTC = new Date(Date.now()).toISOString().split('.')[0] + 'Z'
+
 app.get('/info', (req, res) => {
   const slack_name = req.query.slack_name
-  const current_day = 'Saturday'
+  const current_day = currentDay
   const track = req.query.track
-  const utcTime = new Date(Date.now()).toISOString().split('.')[0] + 'Z'
-  const github_file_url = 'https://github.com/bintus-ux/stage-one-main-source'
+  const utcTime = currentUTC
+  const github_file_url = 'https://github.com/bintus-ux/stage-one-index-repo'
   const github_repo_url =
     'https://github.com/bintus-ux/stage-one-general-source'
   const status_code = 200
