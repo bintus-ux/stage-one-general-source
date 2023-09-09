@@ -13,14 +13,16 @@ let weekday = [
 ]
 let currentDay = weekday[day.getDay()]
 
-let currentUTC = new Date(Date.now()).toISOString().split('.')[0] + 'Z'
+// let currentUTC = new Date(Date.now()).toISOString().split('.')[0] + 'Z'
+let currentUTC = new Date().toISOString()
 
-app.get('/info', (req, res) => {
+app.get('/api', (req, res) => {
   const slack_name = req.query.slack_name
   const current_day = currentDay
   const track = req.query.track
   const utcTime = currentUTC
-  const github_file_url = 'https://github.com/bintus-ux/stage-one-index-repo'
+  const github_file_url =
+    'https://github.com/bintus-ux/stage-one-general-source/blob/main/index.js'
   const github_repo_url =
     'https://github.com/bintus-ux/stage-one-general-source'
   const status_code = 200
@@ -36,6 +38,7 @@ app.get('/info', (req, res) => {
   }
 
   res.json(info)
+  // express.response.setHeader('Content-Type', 'application/json')
 })
 // app.get('/', (req, res) => {
 //   res.send('API is running....')
