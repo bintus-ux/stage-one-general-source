@@ -1,42 +1,40 @@
 const express = require('express')
+const { format, addMinutes, subMinutes, isWithinInterval } = require('date-fns')
 const app = express()
 
-let day = new Date()
-let weekday = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-]
-let currentDay = weekday[day.getDay()]
-
-// let currentUTC = new Date(Date.now()).toISOString().split('.')[0] + 'Z'
-// let currentUTC = new Date().toISOString()
-// let currentUTC = new Date().toISOString().slice(0, -5) + 'Z'
-let now = new Date()
-const currentUTC = now.toISOString().slice(0, 19) + 'Z'
+const port = 5000
 
 app.get('/api', (req, res) => {
-  const slack_name = req.query.slack_name
-  const current_day = currentDay
-  const track = req.query.track
-  const utcTime = currentUTC
-  const github_file_url =
+  const { slack_name, track } = req.query
+
+  const now = new Date()
+  const utcTime = format(now, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+
+  const currentDay = format(now, 'EEEE')
+
+  const twoMinutesAgo = subMinutes(now, 2)
+  const twoMinutesFromNow = addMinutes(now, 2)
+  const isValidTime = isWithinInterval(now, {
+    start: twoMinutesAgo,
+    end: twoMinutesFromNow,
+  })
+
+  if (!slack_name || !track || !isValidTime) {
+    return res.status(400).json({ error: 'Invalid request parameters' })
+  }
+
+  const githubFileUrl =
     'https://github.com/bintus-ux/stage-one-general-source/blob/main/index.js'
-  const github_repo_url =
-    'https://github.com/bintus-ux/stage-one-general-source'
+  const githubRepoUrl = 'https://github.com/bintus-ux/stage-one-general-source'
   const status_code = 200
 
   const info = {
-    slack_name: slack_name,
-    current_day: current_day,
+    slack_name,
+    current_day: currentDay,
     utc_time: utcTime,
-    track: track,
-    github_file_url: github_file_url,
-    github_repo_url: github_repo_url,
+    track,
+    github_file_url: githubFileUrl,
+    github_repo_url: githubRepoUrl,
     status_code: status_code,
   }
 
@@ -47,6 +45,6 @@ app.get('/api', (req, res) => {
 //   res.send('API is running....')
 // })
 
-app.listen(5000, () => {
-  console.log('Server is running on port 5000')
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`)
 })
