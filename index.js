@@ -13,9 +13,11 @@ let weekday = [
 ]
 let currentDay = weekday[day.getDay()]
 
-let currentUTC = new Date(Date.now()).toISOString().split('.')[0] + 'Z'
+// let currentUTC = new Date(Date.now()).toISOString().split('.')[0] + 'Z'
 // let currentUTC = new Date().toISOString()
 // let currentUTC = new Date().toISOString().slice(0, -5) + 'Z'
+let now = new Date()
+const currentUTC = now.toISOString()
 
 app.get('/api', (req, res) => {
   const slack_name = req.query.slack_name
